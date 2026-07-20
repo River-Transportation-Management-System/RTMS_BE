@@ -1,0 +1,21 @@
+/**
+ * Public module boundaries for the RTMS modular monolith.
+ *
+ * Map 1:1 with the core PostgreSQL tables where possible.
+ * Never import another module's infrastructure or persistence directly.
+ */
+export const RTMS_MODULES = [
+  "auth",
+  "cargo-owners",
+  "bookings",
+  "booking-reviews",
+  "ports",
+  "routes",
+  "vessels",
+  "matching",
+  "shipments",
+  "workflow",
+  "rules",
+  "notifications",
+  "audit",
+] as const;

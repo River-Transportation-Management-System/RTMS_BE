@@ -1,0 +1,71 @@
+name: rtms
+
+# Expect RTMS_FE to sit next to this repository:
+#   parent/
+#   ├── RTMS_BE/   (this repo)
+#   └── RTMS_FE/
+
+services:
+  database:
+    image: postgis/postgis:17-3.5-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rtms}
+      POSTGRES_USER: ${POSTGRES_USER:-rtms}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rtms_dev_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rtms} -d ${POSTGRES_DB:-rtms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-rtms}:${POSTGRES_PASSWORD:-rtms_dev_password}@database:5432/${POSTGRES_DB:-rtms}
+      FRONTEND_URL: http://localhost:${FRONTEND_PORT:-3000}
+      N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../RTMS_FE
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api/v1
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    environment:
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:${N8N_PORT:-5678}/
+      GENERIC_TIMEZONE: Asia/Ho_Chi_Minh
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/workflows:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  n8n_data:
