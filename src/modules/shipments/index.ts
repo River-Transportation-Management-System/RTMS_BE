@@ -1,5 +1,1 @@
-/**
- * Confirmed transport trip after booking review.
- * Owns table: Shipment
- */
-export {};
+export type { ShipmentEntity, ShipmentStatus } from "./domain/shipment.entity";

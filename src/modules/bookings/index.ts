@@ -1,5 +1,1 @@
-/**
- * Shipping request lifecycle created by a User on a Route.
- * Owns table: Booking
- */
-export {};
+export type { BookingEntity, BookingStatus } from "./domain/booking.entity";

@@ -1,5 +1,1 @@
-/**
- * Per-port approval/rejection of a booking.
- * Owns table: BookingReview
- */
-export {};
+export type { BookingReviewEntity, BookingReviewStatus } from "./domain/booking-review.entity";

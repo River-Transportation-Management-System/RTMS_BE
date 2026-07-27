@@ -6,7 +6,6 @@
  */
 export const RTMS_MODULES = [
   "auth",
-  "cargo-owners",
   "bookings",
   "booking-reviews",
   "ports",

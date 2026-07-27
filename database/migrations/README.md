@@ -4,23 +4,32 @@ Store ordered, immutable SQL migrations in this directory.
 
 Naming convention: `YYYYMMDDHHMM_description.sql`
 
-## Core tables supplied by the team
+## Data Dictionary tables
 
-- Auth: `Role`, `User`
-- Cargo owner: `CargoOwner`
-- GIS/route: `Port`, `Route`, `RoutePort`
-- Transport: `Booking`, `BookingReview`, `Shipment`
-
-## Extension tables required by the analysis report
-
-- Fleet: `VesselOwner`, `Vessel`, `VesselCargoCapability`,
-  `VesselOperationHistory`
-- Vessel coordination: `VesselRequest`, `VesselResponse`,
-  `BookingVesselSelection`
-- Workflow/audit: `BookingWorkflow`, `ApprovalHistory`, `WorkflowError`
-- Rules/notification: `CargoConflictRule`, `NotificationLog`
+- `role`, `user`
+- `vessel`
+- `booking`
+- `route`, `port`, `route_port`
+- `booking_review`
+- `shipment`
+- `vessel_match`
 
 See `000_schema_overview.md` for both scopes, columns, and relationships.
+
+## Implemented baseline migration
+
+- `202607271700_create_river_transportation_dictionary.sql`
+  - Creates all 10 tables from the provided Data Dictionary:
+    `role`, `user`, `vessel`, `booking`, `route`, `port`, `shipment`,
+    `route_port`, `booking_review`, `vessel_match`.
+  - Adds FK, unique constraints, and supporting indexes.
+
+Apply manually (example with Docker database service):
+
+```bash
+docker compose exec -T database psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+  -f database/migrations/202607271700_create_river_transportation_dictionary.sql
+```
 
 Do not edit a migration after it has been applied to a shared environment.
 Create a new migration for every subsequent change.

@@ -1,5 +1,2 @@
-/**
- * Role + User: authentication, account status, and role-based authorization.
- * Owns tables: Role, User
- */
-export {};
+export type { RoleCode, RoleEntity } from "./domain/role.entity";
+export type { UserEntity, UserStatus } from "./domain/user.entity";

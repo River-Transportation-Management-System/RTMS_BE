@@ -1,11 +1,2 @@
-/**
- * Vessel Service boundary.
- *
- * Owns the planned extension tables:
- * VesselOwner, Vessel, VesselCargoCapability, VesselRequest,
- * VesselResponse, and VesselOperationHistory.
- *
- * Implementation should be split into domain, application,
- * infrastructure, and presentation layers.
- */
-export {};
+export type { VesselEntity, VesselStatus } from "./domain/vessel.entity";
+export type { VesselMatchEntity } from "./domain/vessel-match.entity";

@@ -1,5 +1,2 @@
-/**
- * Transport routes and the ports that belong to each route.
- * Owns tables: Route, RoutePort
- */
-export {};
+export type { RouteEntity } from "./domain/route.entity";
+export type { RoutePortEntity } from "./domain/route-port.entity";
