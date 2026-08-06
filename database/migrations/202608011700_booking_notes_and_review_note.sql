@@ -1,0 +1,9 @@
+BEGIN;
+
+ALTER TABLE booking
+  ADD COLUMN IF NOT EXISTS notes TEXT;
+
+ALTER TABLE booking_review
+  ADD COLUMN IF NOT EXISTS review_note TEXT;
+
+COMMIT;

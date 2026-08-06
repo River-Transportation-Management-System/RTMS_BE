@@ -5,6 +5,9 @@ RUN npm ci
 
 FROM node:24-alpine AS builder
 WORKDIR /app
+# Next.js collects route data at build time; env is required by pg pool imports.
+ENV DATABASE_URL=postgresql://rtms:rtms@127.0.0.1:5432/rtms
+ENV FRONTEND_URL=http://localhost:3000
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build

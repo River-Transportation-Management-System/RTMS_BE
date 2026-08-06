@@ -8,4 +8,14 @@ export interface BookingReviewEntity {
   portId: Nullable<EntityId>;
   reviewStatus: Nullable<BookingReviewStatus>;
   reviewDate: Nullable<Timestamp>;
+  reviewNote: Nullable<string>;
 }
+
+export type BookingReviewSummary = {
+  reviewId: EntityId;
+  portId: Nullable<EntityId>;
+  reviewStatus: Nullable<BookingReviewStatus>;
+  reviewDate: Nullable<Timestamp>;
+  reviewNote: Nullable<string>;
+  summary: string;
+};
