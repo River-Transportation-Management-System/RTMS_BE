@@ -1,6 +1,13 @@
 import type { EntityId, Nullable } from "@/shared/domain/common";
 
-export type VesselStatus = "AVAILABLE" | "IN_TRANSIT" | "MAINTENANCE" | "INACTIVE" | string;
+export const VESSEL_STATUSES = [
+  "AVAILABLE",
+  "IN_TRANSIT",
+  "MAINTENANCE",
+  "INACTIVE",
+] as const;
+
+export type VesselStatus = (typeof VESSEL_STATUSES)[number];
 
 export interface VesselEntity {
   vesselId: EntityId;
