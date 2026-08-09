@@ -24,6 +24,13 @@ See `000_schema_overview.md` for both scopes, columns, and relationships.
     `route_port`, `booking_review`, `vessel_match`.
   - Adds FK, unique constraints, and supporting indexes.
 
+## Subsequent migrations
+
+- `202608091200_normalize_vessel_status.sql`
+  - Reduces `vessel_status` to `ACTIVE` and `INACTIVE`.
+  - Converts legacy values and marks vessels with unfinished shipments as `INACTIVE`.
+  - Enforces a non-null status, an `ACTIVE` default, and a check constraint.
+
 Apply manually (example with Docker database service):
 
 ```bash
