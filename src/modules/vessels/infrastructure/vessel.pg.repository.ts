@@ -47,6 +47,18 @@ function mapVessel(row: VesselRow): VesselEntity {
 export class VesselPgRepository implements VesselRepository {
   constructor(private readonly db: Pool = database) {}
 
+  async listCargoTypes(): Promise<string[]> {
+    const result = await this.db.query<{ vessel_cargo_type: string }>(
+      `SELECT DISTINCT LOWER(BTRIM(vessel_cargo_type)) AS vessel_cargo_type
+       FROM vessel
+       WHERE vessel_cargo_type IS NOT NULL
+         AND BTRIM(vessel_cargo_type) <> ''
+       ORDER BY vessel_cargo_type ASC`,
+    );
+
+    return result.rows.map((row) => row.vessel_cargo_type);
+  }
+
   async list(filter: ListVesselsFilter, pagination: PaginationInput) {
     const where: string[] = [];
     const params: unknown[] = [];

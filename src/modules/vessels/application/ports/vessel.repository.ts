@@ -20,6 +20,7 @@ export type ListVesselsFilter = {
 
 export interface VesselRepository {
   list(filter: ListVesselsFilter, pagination: PaginationInput): Promise<PaginatedResult<VesselEntity>>;
+  listCargoTypes(): Promise<string[]>;
   findById(vesselId: EntityId): Promise<VesselEntity | null>;
   create(input: CreateVesselRecord): Promise<VesselEntity>;
   update(vesselId: EntityId, patch: UpdateVesselRecord): Promise<VesselEntity>;
