@@ -18,7 +18,7 @@ import {
 type VesselRow = {
   vessel_id: number;
   vessel_owner_name: string | null;
-  vessel_status: VesselStatus | null;
+  vessel_status: VesselStatus;
   vessel_capacity: string | null;
   vessel_cargo_type: string | null;
   user_id: number | null;
