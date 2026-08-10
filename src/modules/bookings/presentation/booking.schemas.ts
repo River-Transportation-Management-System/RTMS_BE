@@ -51,6 +51,11 @@ export const updateBookingSchema = z
     message: "At least one editable field is required",
   });
 
+export const selectVesselForBookingSchema = z.object({
+  selected_vessel_id: positiveId,
+  selection_note: z.string().trim().max(2000).optional().nullable(),
+});
+
 export const listBookingsQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(DEFAULT_PAGE),
   limit: z.coerce.number().int().positive().max(MAX_LIMIT).default(DEFAULT_LIMIT),
@@ -67,4 +72,5 @@ export const listBookingsQuerySchema = z.object({
 
 export type CreateBookingInput = z.infer<typeof createBookingSchema>;
 export type UpdateBookingInput = z.infer<typeof updateBookingSchema>;
+export type SelectVesselForBookingInput = z.infer<typeof selectVesselForBookingSchema>;
 export type ListBookingsQuery = z.infer<typeof listBookingsQuerySchema>;
