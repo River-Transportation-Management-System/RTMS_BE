@@ -20,6 +20,8 @@ export function toSelectedVesselResponse(selection: SelectedVesselDetails) {
     selection: {
       note: selection.selectionNote,
       selected_at: selection.selectedAt,
+      status: selection.selectionStatus,
+      finalized_at: selection.finalizedAt,
     },
   };
 }

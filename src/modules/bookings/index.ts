@@ -9,6 +9,12 @@ export { INITIAL_BOOKING_STATUS } from "./domain/booking.entity";
 
 export type { BookingRepository } from "./application/ports/booking.repository";
 export type {
+  ApprovedPortContext,
+  CreateFinalConfirmationRecord,
+  FinalConfirmationRepository,
+  FinalConfirmationResult,
+} from "./application/ports/final-confirmation.repository";
+export type {
   SaveVesselSelectionRecord,
   SelectedVesselDetails,
   VesselMatchSelectionRecord,
@@ -19,10 +25,12 @@ export { listBookings } from "./application/list-bookings";
 export { getBooking } from "./application/get-booking";
 export { updateBooking } from "./application/update-booking";
 export { cancelBooking } from "./application/cancel-booking";
+export { finalConfirmBooking } from "./application/final-confirm-booking";
 export { getSelectedVesselForBooking } from "./application/get-selected-vessel-for-booking";
 export { selectVesselForBooking } from "./application/select-vessel-for-booking";
 
 export { BookingPgRepository } from "./infrastructure/booking.pg.repository";
+export { FinalConfirmationPgRepository } from "./infrastructure/final-confirmation.pg.repository";
 export { VesselSelectionPgRepository } from "./infrastructure/vessel-selection.pg.repository";
 
 export {
@@ -32,4 +40,6 @@ export {
   updateBookingSchema,
 } from "./presentation/booking.schemas";
 export { toBookingDetailResponse, toBookingResponse } from "./presentation/booking.mapper";
+export { finalConfirmationSchema } from "./presentation/final-confirmation.schemas";
+export { toFinalConfirmationResponse } from "./presentation/final-confirmation.mapper";
 export { toSelectedVesselResponse } from "./presentation/vessel-selection.mapper";

@@ -33,10 +33,19 @@ export async function selectVesselForBooking(
     );
   }
 
-  await deps.vesselSelections.saveSelection({
-    ...match,
-    selectionNote: input.selection_note?.trim() ? input.selection_note.trim() : null,
-  });
+  try {
+    await deps.vesselSelections.saveSelection({
+      ...match,
+      selectionNote: input.selection_note?.trim() ? input.selection_note.trim() : null,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "VESSEL_SELECTION_ALREADY_CONFIRMED") {
+      throw AppError.conflict("Cannot change vessel selection after final confirmation", {
+        booking_id: bookingId,
+      });
+    }
+    throw error;
+  }
 
   return match;
 }

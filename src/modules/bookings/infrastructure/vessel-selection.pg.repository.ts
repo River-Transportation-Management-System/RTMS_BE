@@ -26,6 +26,8 @@ type SelectedVesselRow = VesselMatchSelectionRow & {
   owner_user_phone: string | null;
   selection_note: string | null;
   selected_at: Date;
+  selection_status: "FINALIZED";
+  finalized_at: Date;
 };
 
 export class VesselSelectionPgRepository implements VesselSelectionRepository {
@@ -74,7 +76,9 @@ export class VesselSelectionPgRepository implements VesselSelectionRepository {
          owner.user_email AS owner_user_email,
          owner.user_phone AS owner_user_phone,
          bvs.selection_note,
-         bvs.selected_at
+         bvs.selected_at,
+         bvs.selection_status,
+         bvs.finalized_at
        FROM booking_vessel_selection bvs
        INNER JOIN vessel_match vm
          ON vm.match_id = bvs.match_id
@@ -106,22 +110,38 @@ export class VesselSelectionPgRepository implements VesselSelectionRepository {
       ownerUserPhone: row.owner_user_phone,
       selectionNote: row.selection_note,
       selectedAt: row.selected_at,
+      selectionStatus: row.selection_status,
+      finalizedAt: row.finalized_at,
     };
   }
 
   async saveSelection(input: SaveVesselSelectionRecord): Promise<void> {
+    const confirmation = await this.db.query<{ exists: boolean }>(
+      `SELECT EXISTS(
+         SELECT 1 FROM booking_final_confirmation WHERE booking_id = $1
+       ) AS exists`,
+      [input.bookingId],
+    );
+    if (confirmation.rows[0]?.exists) {
+      throw new Error("VESSEL_SELECTION_ALREADY_CONFIRMED");
+    }
+
     await this.db.query(
       `INSERT INTO booking_vessel_selection (
          booking_id,
          match_id,
          vessel_id,
-         selection_note
-       ) VALUES ($1, $2, $3, $4)
+         selection_note,
+         selection_status,
+         finalized_at
+       ) VALUES ($1, $2, $3, $4, 'FINALIZED', CURRENT_TIMESTAMP)
        ON CONFLICT (booking_id) DO UPDATE
        SET match_id = EXCLUDED.match_id,
            vessel_id = EXCLUDED.vessel_id,
            selection_note = EXCLUDED.selection_note,
-           selected_at = CURRENT_TIMESTAMP`,
+           selected_at = CURRENT_TIMESTAMP,
+           selection_status = 'FINALIZED',
+           finalized_at = CURRENT_TIMESTAMP`,
       [input.bookingId, input.matchId, input.vesselId, input.selectionNote],
     );
   }

@@ -22,6 +22,8 @@ export type SelectedVesselDetails = VesselMatchSelectionRecord & {
   ownerUserPhone: Nullable<string>;
   selectionNote: Nullable<string>;
   selectedAt: Timestamp;
+  selectionStatus: "FINALIZED";
+  finalizedAt: Timestamp;
 };
 
 export interface VesselSelectionRepository {
