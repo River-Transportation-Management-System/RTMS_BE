@@ -461,140 +461,140 @@ INSERT INTO vessel (
     )
 VALUES (
         'Công ty Vận tải Sông Việt 01',
-        'AVAILABLE',
+        'ACTIVE',
         500.00,
         'Container',
         16
     ),
     (
         'Công ty Vận tải Sông Việt 02',
-        'AVAILABLE',
+        'ACTIVE',
         350.00,
         'Lúa gạo',
         17
     ),
     (
         'Công ty Vận tải Sông Việt 03',
-        'IN_TRANSIT',
+        'INACTIVE',
         600.00,
         'Than đá',
         18
     ),
     (
         'Công ty Vận tải Sông Việt 04',
-        'AVAILABLE',
+        'INACTIVE',
         400.00,
         'Cát xây dựng',
         19
     ),
     (
         'Công ty Vận tải Sông Việt 05',
-        'MAINTENANCE',
+        'INACTIVE',
         300.00,
         'Thép cuộn',
         20
     ),
     (
         'Vận tải Miền Tây 06',
-        'AVAILABLE',
+        'ACTIVE',
         500.00,
         'Vật liệu xây dựng',
         21
     ),
     (
         'Vận tải Miền Tây 07',
-        'IN_TRANSIT',
+        'INACTIVE',
         450.00,
         'Phân bón',
         22
     ),
     (
         'Vận tải Miền Tây 08',
-        'AVAILABLE',
+        'INACTIVE',
         700.00,
         'Container',
         23
     ),
     (
         'Vận tải Miền Tây 09',
-        'AVAILABLE',
+        'INACTIVE',
         250.00,
         'Lúa gạo',
         24
     ),
     (
         'Vận tải Miền Tây 10',
-        'AVAILABLE',
+        'ACTIVE',
         550.00,
         'Nông sản',
         25
     ),
     (
         'Tập đoàn Tân Cảng 11',
-        'IN_TRANSIT',
+        'ACTIVE',
         800.00,
         'Container',
         26
     ),
     (
         'Tập đoàn Tân Cảng 12',
-        'AVAILABLE',
+        'ACTIVE',
         650.00,
         'Thép cuộn',
         27
     ),
     (
         'Tập đoàn Tân Cảng 13',
-        'AVAILABLE',
+        'ACTIVE',
         400.00,
         'Gỗ cây',
         28
     ),
     (
         'Tập đoàn Tân Cảng 14',
-        'AVAILABLE',
+        'INACTIVE',
         300.00,
         'Lúa gạo',
         29
     ),
     (
         'Tập đoàn Tân Cảng 15',
-        'MAINTENANCE',
+        'INACTIVE',
         500.00,
         'Cát xây dựng',
         30
     ),
     (
         'Chủ tàu Nguyễn Văn Nam 16',
-        'AVAILABLE',
+        'INACTIVE',
         200.00,
         'Nông sản',
         31
     ),
     (
         'Chủ tàu Trần Văn Hải 17',
-        'AVAILABLE',
+        'INACTIVE',
         350.00,
         'Lúa gạo',
         32
     ),
     (
         'Chủ tàu Lê Hoàng Minh 18',
-        'IN_TRANSIT',
+        'INACTIVE',
         450.00,
         'Phân bón',
         33
     ),
     (
         'Chủ tàu Phạm Quốc Tuấn 19',
-        'AVAILABLE',
+        'ACTIVE',
         600.00,
         'Container',
         34
     ),
     (
         'Chủ tàu Võ Văn Linh 20',
-        'AVAILABLE',
+        'ACTIVE',
         500.00,
         'Vật liệu xây dựng',
         35

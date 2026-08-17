@@ -39,7 +39,7 @@ Port 1──N BookingReview
 
 ### Vessel
 - `vessel_id` PK
-- `vessel_owner_name`, `vessel_status`
+- `vessel_owner_name`, `vessel_status` (`ACTIVE` = ready for new orders, `INACTIVE` = unavailable)
 - `vessel_capacity`, `vessel_cargo_type`
 - `user_id` FK → User (unique)
 

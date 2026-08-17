@@ -28,10 +28,11 @@ CREATE INDEX IF NOT EXISTS idx_user_email ON "user"(user_email);
 CREATE TABLE IF NOT EXISTS vessel (
   vessel_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   vessel_owner_name VARCHAR(150),
-  vessel_status VARCHAR(30),
+  vessel_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
   vessel_capacity DECIMAL(14, 2),
   vessel_cargo_type VARCHAR(80),
-  user_id INTEGER UNIQUE REFERENCES "user"(user_id)
+  user_id INTEGER UNIQUE REFERENCES "user"(user_id),
+  CONSTRAINT chk_vessel_status CHECK (vessel_status IN ('ACTIVE', 'INACTIVE'))
 );
 
 CREATE INDEX IF NOT EXISTS idx_vessel_status ON vessel(vessel_status);
