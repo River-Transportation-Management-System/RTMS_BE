@@ -15,6 +15,5 @@ export const RTMS_MODULES = [
   "shipments",
   "workflow",
   "rules",
-  "notifications",
   "audit",
 ] as const;
