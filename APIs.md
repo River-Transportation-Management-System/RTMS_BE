@@ -1,6 +1,10 @@
 # Danh sách & Đặc tả Chi tiết các API trong RTMS Backend (`/api/v1`)
 
-Tài liệu này tổng hợp đặc tả đầy đủ về các API trong hệ thống backend RTMS, bao gồm cụm **Bookings APIs** (`/api/v1/bookings`) và toàn bộ **Internal Workflow APIs** (`/api/v1/internal`).
+Tài liệu này tổng hợp đặc tả đầy đủ về tất cả các cụm API trong hệ thống backend RTMS, bao gồm:
+1. **Bookings APIs** (`/api/v1/bookings`)
+2. **Internal Workflow APIs** (`/api/v1/internal`)
+3. **Auth APIs** (`/api/v1/auth`)
+4. **Users APIs** (`/api/v1/users`)
 
 ---
 
@@ -10,6 +14,8 @@ Hệ thống được thiết kế chuẩn theo mô hình **Clean Architecture (
 
 ```
 src/modules/
+├── auth/              # Xử lý xác thực JWT & phân quyền (Authentication & Authorization)
+├── user/              # Quản lý danh sách & hồ sơ người dùng (User Management)
 ├── bookings/          # Quản lý đơn hàng vận tải (Booking)
 ├── booking-reviews/  # Đánh giá điều kiện cập cảng (Port Review)
 ├── matching/          # Ghép nối tàu vận chuyển phù hợp (Vessel Matching)
@@ -20,7 +26,7 @@ src/modules/
 Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 1. **Domain Layer**: Định nghĩa Entities, Interfaces và Value Objects của nghiệp vụ.
 2. **Application Layer**: Chứa các Use Cases (bộ xử lý logic nghiệp vụ chính).
-3. **Infrastructure Layer**: Thực thi kết nối DB PostgreSQL thông qua Repositories (`PgRepository`).
+3. **Infrastructure Layer**: Thực thi kết nối DB PostgreSQL thông qua Repositories (`UserPgRepository`, `BookingPgRepository`,...).
 4. **Presentation Layer**: Validation Schemas (Zod) và Mappers chuyển đổi DTO sang JSON response.
 
 ---
@@ -324,8 +330,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Thiết kế thực hiện**:
   * **Presentation**: [`toMatchingResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/matching/presentation/matching.mapper.ts).
   * **Application**: [`getBookingMatches`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/matching/application/get-booking-matches.ts).
-  * **Infrastructure**: [`MatchingPgRepository.findMatchesByBookingId`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/matching/infrastructure/matching.pg.repository.ts) (JOIN SQL giữa `vessel_match` và `vessel`).
-  * **Domain**: [`VesselMatchDetail`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/matching/application/ports/matching.repository.ts).
+  * **Infrastructure**: [`MatchingPgRepository.findMatchesByBookingId`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/matching/infrastructure/matching.pg.repository.ts).
 
 * **Response Example (`200 OK`)**:
   ```json
@@ -361,7 +366,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Vị trí Route Handler**: `src/app/api/v1/internal/workflow/port-review-completed/route.ts`
 * **Thiết kế thực hiện**:
   * **Presentation**: [`toCompletePortReviewResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/presentation/workflow.mapper.ts).
-  * **Application**: [`completePortReview`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/complete-port-review.ts) (nếu APPROVED -> cập nhật trạng thái `APPROVED` & chuyển bước `MATCHING_VESSELS`).
+  * **Application**: [`completePortReview`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/complete-port-review.ts).
   * **Infrastructure**: [`BookingPgRepository.updateStatus`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/bookings/infrastructure/booking.pg.repository.ts).
 
 * **Request Body (JSON)**:
@@ -431,7 +436,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Vị trí Route Handler**: `src/app/api/v1/internal/workflow/[bookingId]/route.ts`
 * **Thiết kế thực hiện**:
   * **Presentation**: [`toWorkflowSnapshotResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/presentation/workflow.mapper.ts).
-  * **Application**: [`getWorkflowSnapshot`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/get-workflow-snapshot.ts) (tính toán bước `current_step` trong State Machine).
+  * **Application**: [`getWorkflowSnapshot`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/get-workflow-snapshot.ts).
   * **Infrastructure**: [`WorkflowPgRepository.getSnapshot`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/infrastructure/workflow.pg.repository.ts).
 
 * **Response Example (`200 OK`)**:
@@ -494,7 +499,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Vị trí Route Handler**: `src/app/api/v1/internal/workflow/customer-selected/route.ts`
 * **Thiết kế thực hiện**:
   * **Presentation**: [`toSelectCustomerResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/presentation/workflow.mapper.ts).
-  * **Application**: [`selectCustomer`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/select-customer.ts) (gán match status `SELECTED`, cập nhật booking status `MATCHED` và tự động tạo `Shipment` trạng thái `PLANNED`).
+  * **Application**: [`selectCustomer`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/application/select-customer.ts).
   * **Infrastructure**: [`WorkflowPgRepository.updateVesselMatchSelected`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/infrastructure/workflow.pg.repository.ts), [`WorkflowPgRepository.createShipment`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/workflow/infrastructure/workflow.pg.repository.ts).
 
 * **Request Body (JSON)**:
@@ -527,7 +532,6 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Method / Endpoint**: `PATCH /api/v1/internal/workflow/:bookingId`
 * **Vị trí Route Handler**: `src/app/api/v1/internal/workflow/[bookingId]/route.ts`
 * **Thiết kế thực hiện**:
-  * **Application**: Lọc và cập nhật các trường linh hoạt trong luồng làm việc (`receive_date`, `expected_date`, `notes`, `booking_status`,...).
   * **Infrastructure**: [`BookingPgRepository.update`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/bookings/infrastructure/booking.pg.repository.ts).
 
 * **Request Body (JSON)**:
@@ -563,7 +567,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Method / Endpoint**: `POST /api/v1/internal/events`
 * **Vị trí Route Handler**: `src/app/api/v1/internal/events/route.ts`
 * **Thiết kế thực hiện**:
-  * **Application**: [`publishEvent`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/events/application/publish-event.ts) (phát sinh `event_id` độc nhất, log thông tin sự kiện ra hệ thống).
+  * **Application**: [`publishEvent`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/events/application/publish-event.ts).
 
 * **Request Body (JSON)**:
   ```json
@@ -596,9 +600,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Method / Endpoint**: `POST /api/v1/internal/jobs/booking-expired`
 * **Vị trí Route Handler**: `src/app/api/v1/internal/jobs/booking-expired/route.ts`
 * **Thiết kế thực hiện**:
-  * **Infrastructure**: Quét SQL Postgres cập nhật `booking_status = 'EXPIRED'` đối với các booking `PENDING` có `expired_date < CURRENT_TIMESTAMP`.
-
-* **Request Body**: `{}`
+  * **Infrastructure**: Quét SQL Postgres cập nhật `booking_status = 'EXPIRED'` cho các booking trễ hạn.
 
 * **Response Example (`200 OK`)**:
   ```json
@@ -621,9 +623,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Method / Endpoint**: `POST /api/v1/internal/jobs/vessel-request-timeout`
 * **Vị trí Route Handler**: `src/app/api/v1/internal/jobs/vessel-request-timeout/route.ts`
 * **Thiết kế thực hiện**:
-  * **Infrastructure**: Quét SQL Postgres cập nhật `match_status = 'TIMEOUT'` đối với các ghép tàu `PENDING` tạo cách đây hơn 24 giờ.
-
-* **Request Body**: `{}`
+  * **Infrastructure**: Quét SQL Postgres cập nhật `match_status = 'TIMEOUT'` cho ghép tàu quá 24h.
 
 * **Response Example (`200 OK`)**:
   ```json
@@ -646,7 +646,7 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
 * **Method / Endpoint**: `POST /api/v1/internal/jobs/send-reminder`
 * **Vị trí Route Handler**: `src/app/api/v1/internal/jobs/send-reminder/route.ts`
 * **Thiết kế thực hiện**:
-  * **Application**: Lấy thông tin chủ hàng của các `booking_ids` chỉ định và phát thông báo nhắc nhở theo ngữ cảnh `reminder_target_context`.
+  * **Application**: Phát thông báo nhắc nhở theo ngữ cảnh.
 
 * **Request Body (JSON)**:
   ```json
@@ -671,6 +671,227 @@ Mỗi module bao gồm 4 tầng phân tách rõ ràng:
       ],
       "processed_count": 1,
       "job_status": "COMPLETED"
+    }
+  }
+  ```
+
+---
+
+## 🔑 3. Danh sách Auth APIs (`/api/v1/auth`)
+
+| # | Tên API | HTTP Method | Endpoint Path | Mô tả chức năng | Module thực thi |
+|---|---|---|---|---|---|
+| 1 | **Đăng nhập hệ thống** | `POST` | `/api/v1/auth/login` | Xác thực email/password và trả về JWT Bearer Token | `modules/auth` |
+| 2 | **Lấy thông tin người dùng hiện tại** | `GET` | `/api/v1/auth/me` | Lấy profile tài khoản thông qua Header Token | `modules/auth` |
+| 3 | **Đăng xuất hệ thống** | `POST` | `/api/v1/auth/logout` | Vô hiệu hóa JWT Token phía Client và trả về mốc thời gian | `modules/auth` |
+
+---
+
+### 3.1 Đăng nhập hệ thống (User Login)
+
+* **Method / Endpoint**: `POST /api/v1/auth/login`
+* **Vị trí Route Handler**: `src/app/api/v1/auth/login/route.ts`
+* **Thiết kế thực hiện**:
+  * **Presentation**: [`loginSchema`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/presentation/auth.schemas.ts) (validate email/password), [`toLoginResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/presentation/auth.mapper.ts).
+  * **Application**: [`login`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/application/login.ts) (kiểm tra tài khoản, mật khẩu, trạng thái `ACTIVE` và ký JWT Token).
+  * **Infrastructure**: [`UserPgRepository.findByEmail`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/infrastructure/user.pg.repository.ts) (JOIN SQL giữa bảng `"user"` và `role`).
+  * **Domain**: [`AuthUserRecord`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/application/ports/auth-user.repository.ts).
+
+* **Request Body (JSON)**:
+  ```json
+  {
+    "user_email": "admin@vesseapp.vn",
+    "password": "123456"
+  }
+  ```
+
+* **Response Example (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "data": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "token_type": "Bearer",
+      "expires_in": 900,
+      "user": {
+        "user_id": "1",
+        "user_name": "admin_system",
+        "user_email": "admin@vesseapp.vn",
+        "role_id": "1",
+        "role_name": "Quản trị viên",
+        "user_status": "ACTIVE"
+      }
+    }
+  }
+  ```
+
+---
+
+### 3.2 Lấy thông tin người dùng hiện tại (Get Current User Profile)
+
+* **Method / Endpoint**: `GET /api/v1/auth/me`
+* **Vị trí Route Handler**: `src/app/api/v1/auth/me/route.ts`
+* **Thiết kế thực hiện**:
+  * **Presentation**: [`toMeResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/presentation/auth.mapper.ts).
+  * **Application**: [`getMe`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/application/get-me.ts) (giải mã & verify JWT Token, lấy thông tin chi tiết profile).
+  * **Infrastructure**: [`UserPgRepository.getProfileById`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/infrastructure/user.pg.repository.ts) (truy vấn Postgres bảng `"user"` và `role`).
+  * **Domain**: [`AuthUserProfile`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/application/ports/auth-user.repository.ts).
+
+* **Request**:
+  * **Headers**:
+    ```http
+    Authorization: Bearer <access_token>
+    ```
+
+* **Response Example (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "timestamp": "2026-08-17T12:36:07.819Z",
+    "data": {
+      "user_id": 1,
+      "user_name": "admin_system",
+      "user_phone": "0901000001",
+      "user_email": "admin@vesseapp.vn",
+      "user_status": "ACTIVE",
+      "created_at": "2026-06-02T16:03:52.636Z",
+      "updated_at": "2026-08-01T16:03:52.636Z",
+      "role": {
+        "role_id": 1,
+        "role_name": "Quản trị viên",
+        "role_code": "ADMIN"
+      }
+    }
+  }
+  ```
+
+---
+
+### 3.3 Đăng xuất hệ thống (User Logout)
+
+* **Method / Endpoint**: `POST /api/v1/auth/logout`
+* **Vị trí Route Handler**: `src/app/api/v1/auth/logout/route.ts`
+* **Thiết kế thực hiện**:
+  * **Presentation**: [`toLogoutResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/presentation/auth.mapper.ts).
+  * **Application**: [`logout`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/auth/application/logout.ts) (giải mã token và ghi nhận thời điểm thu hồi token `revoked_at`).
+
+* **Request**:
+  * **Headers**:
+    ```http
+    Authorization: Bearer <access_token>
+    ```
+
+* **Response Example (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "message": "Đăng xuất thành công",
+    "revoked_at": "2026-08-17T12:36:08.091Z"
+  }
+  ```
+
+---
+
+## 👤 4. Danh sách Users APIs (`/api/v1/users`)
+
+| # | Tên API | HTTP Method | Endpoint Path | Mô tả chức năng | Module thực thi |
+|---|---|---|---|---|---|
+| 1 | **Lấy danh sách Người dùng** | `GET` | `/api/v1/users` | Danh sách tài khoản người dùng với phân trang, tìm kiếm & bộ lọc vai trò/trạng thái | `modules/user` |
+| 2 | **Xem chi tiết Người dùng** | `GET` | `/api/v1/users/:id` | Thông tin chi tiết một tài khoản người dùng theo ID | `modules/user` |
+
+---
+
+### 4.1 Lấy danh sách Người dùng (List Users)
+
+* **Method / Endpoint**: `GET /api/v1/users`
+* **Vị trí Route Handler**: `src/app/api/v1/users/route.ts`
+* **Thiết kế thực hiện**:
+  * **Presentation**: [`getUsersQuerySchema`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/presentation/user.schemas.ts) (validate query params), [`toGetUsersResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/presentation/user.mapper.ts).
+  * **Application**: [`getUsers`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/application/get-users.ts).
+  * **Infrastructure**: [`UserPgRepository.getUsers`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/infrastructure/user.pg.repository.ts) (truy vấn Postgres bảng `"user"` sử dụng `COUNT(*) OVER()`, hỗ trợ tìm kiếm tên/email, lọc role_id và user_status).
+  * **Domain**: [`PaginatedUsers`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/application/ports/user.repository.ts).
+
+* **Request**:
+  * **Query Parameters**:
+    * `page` *(number, default: 1)*: Trang số.
+    * `limit` *(number, default: 10)*: Số lượng bản ghi / trang.
+    * `search` *(string, optional)*: Tìm kiếm theo tên hoặc email.
+    * `role_id` *(number, optional)*: Lọc theo ID vai trò.
+    * `user_status` *(string, optional)*: Lọc theo trạng thái (`ACTIVE`, `INACTIVE`, `LOCKED`).
+
+* **Response Example (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "user_id": 10,
+        "user_name": "doan_van_i",
+        "user_email": "doanvani@gmail.com",
+        "user_phone": "0912345679",
+        "user_status": "INACTIVE",
+        "role_id": 2,
+        "created_at": "2026-07-12T16:03:52.636Z",
+        "updated_at": "2026-08-01T16:03:52.636Z",
+        "deleted_at": null
+      },
+      {
+        "user_id": 9,
+        "user_name": "bui_thi_h",
+        "user_email": "buithih@gmail.com",
+        "user_phone": "0912345678",
+        "user_status": "ACTIVE",
+        "role_id": 2,
+        "created_at": "2026-07-07T16:03:52.636Z",
+        "updated_at": "2026-08-01T16:03:52.636Z",
+        "deleted_at": null
+      }
+    ],
+    "meta": {
+      "total": 35,
+      "page": 1,
+      "limit": 5,
+      "total_pages": 7
+    }
+  }
+  ```
+
+---
+
+### 4.2 Xem chi tiết Người dùng (Get User Detail)
+
+* **Method / Endpoint**: `GET /api/v1/users/:id`
+* **Vị trí Route Handler**: `src/app/api/v1/users/[id]/route.ts`
+* **Thiết kế thực hiện**:
+  * **Presentation**: [`toUserDetailResponse`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/presentation/user.mapper.ts).
+  * **Application**: [`getUserById`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/application/get-user-by-id.ts).
+  * **Infrastructure**: [`UserPgRepository.getUserById`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/infrastructure/user.pg.repository.ts) (JOIN bảng `"user"` và `role` trong Postgres, tự động bỏ qua tài khoản bị soft delete).
+  * **Domain**: [`UserDetailRecord`](file:///d:/Develop/River_Management/RTMS_BE/src/modules/user/application/ports/user.repository.ts).
+
+* **Request**:
+  * **Path Parameter**: `:id` (ID người dùng).
+
+* **Response Example (`200 OK`)**:
+  ```json
+  {
+    "success": true,
+    "timestamp": "2026-08-17T12:36:10.326Z",
+    "data": {
+      "user_id": 1,
+      "user_name": "admin_system",
+      "user_email": "admin@vesseapp.vn",
+      "user_phone": "0901000001",
+      "user_status": "ACTIVE",
+      "role": {
+        "role_id": 1,
+        "role_name": "Quản trị viên",
+        "role_code": "ADMIN"
+      },
+      "timestamps": {
+        "created_at": "2026-06-02T16:03:52.636Z",
+        "updated_at": "2026-08-01T16:03:52.636Z"
+      }
     }
   }
   ```
