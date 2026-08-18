@@ -11,6 +11,7 @@ export const RTMS_MODULES = [
   "ports",
   "routes",
   "vessels",
+  "vessel-matches",
   "matching",
   "shipments",
   "workflow",
