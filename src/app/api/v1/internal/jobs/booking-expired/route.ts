@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const result = await database.query(
       `UPDATE booking
        SET booking_status = 'EXPIRED'
-       WHERE booking_status = 'PENDING'
+       WHERE booking_status IN ('PENDING', 'PENDING_PORT_REVIEW', 'WAITING_VESSEL_RESPONSE', 'VESSEL_CANDIDATES_READY', 'WAITING_CUSTOMER_SELECTION')
          AND expired_date < CURRENT_TIMESTAMP
        RETURNING booking_id`,
     );

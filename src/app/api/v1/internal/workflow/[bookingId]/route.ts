@@ -26,16 +26,32 @@ export async function GET(request: Request, context: RouteContext) {
     let currentStep = "UNKNOWN";
     const status = snapshot.booking.bookingStatus;
 
-    if (status === "CANCELLED" || status === "EXPIRED") {
-      currentStep = "CLOSED";
+    const EXCEPTION_STATUSES = new Set([
+      "REJECTED_BY_PORT",
+      "INVALID_ROUTE",
+      "NO_VESSEL_AVAILABLE",
+      "NO_VESSEL_ACCEPTED",
+      "EXPIRED",
+      "CANCELLED",
+      "FAILED",
+    ]);
+
+    if (EXCEPTION_STATUSES.has(status || "")) {
+      currentStep = `CLOSED_EXCEPTION_${status}`;
     } else if (status === "COMPLETED") {
       currentStep = "COMPLETED";
-    } else if (status === "PENDING") {
+    } else if (status === "PENDING" || status === "PENDING_PORT_REVIEW") {
       currentStep = "PORT_REVIEW";
-    } else if (status === "APPROVED") {
+    } else if (status === "WAITING_VESSEL_RESPONSE") {
+      currentStep = "VESSEL_RESPONSE_WAIT";
+    } else if (status === "APPROVED" || status === "VESSEL_CANDIDATES_READY") {
       const hasAcceptedMatches = snapshot.matches.some(m => m.matchStatus === "ACCEPTED");
       currentStep = hasAcceptedMatches ? "CUSTOMER_SELECTION" : "VESSEL_MATCHING";
-    } else if (status === "MATCHED") {
+    } else if (status === "WAITING_CUSTOMER_SELECTION") {
+      currentStep = "CUSTOMER_SELECTION";
+    } else if (status === "WAITING_FINAL_CONFIRMATION") {
+      currentStep = "FINAL_CONFIRMATION";
+    } else if (status === "CONFIRMED" || status === "MATCHED") {
       currentStep = "SHIPMENT_PREPARATION";
     } else if (status === "IN_PROGRESS") {
       currentStep = "IN_TRANSIT";

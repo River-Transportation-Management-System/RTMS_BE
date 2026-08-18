@@ -88,8 +88,7 @@ CREATE TABLE booking (
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   receive_date TIMESTAMP,
   expected_date TIMESTAMP,
-  expired_date TIMESTAMP,
-  booking_status VARCHAR(50) DEFAULT 'PENDING',
+  booking_status VARCHAR(50) DEFAULT 'PENDING_PORT_REVIEW',
   cargo_type VARCHAR(100),
   cargo_capacity DECIMAL(10, 2),
   user_id INT,
@@ -100,13 +99,24 @@ CREATE TABLE booking (
   SET NULL,
     CONSTRAINT chk_booking_status CHECK (
       booking_status IN (
-        'PENDING',
-        'APPROVED',
-        'MATCHED',
+        'PENDING_PORT_REVIEW',
+        'WAITING_VESSEL_RESPONSE',
+        'VESSEL_CANDIDATES_READY',
+        'WAITING_CUSTOMER_SELECTION',
+        'WAITING_FINAL_CONFIRMATION',
+        'CONFIRMED',
         'IN_PROGRESS',
         'COMPLETED',
+        'REJECTED_BY_PORT',
+        'INVALID_ROUTE',
+        'NO_VESSEL_AVAILABLE',
+        'NO_VESSEL_ACCEPTED',
+        'EXPIRED',
         'CANCELLED',
-        'EXPIRED'
+        'FAILED',
+        'PENDING',
+        'APPROVED',
+        'MATCHED'
       )
     )
 );

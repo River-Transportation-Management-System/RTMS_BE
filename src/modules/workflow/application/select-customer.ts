@@ -23,7 +23,7 @@ export async function selectCustomer(deps: SelectCustomerDeps, input: SelectCust
 
   await deps.workflow.updateVesselMatchSelected(input.bookingId, input.selectedVesselId);
 
-  const updatedBooking = await deps.bookings.updateStatus(input.bookingId, "MATCHED");
+  const updatedBooking = await deps.bookings.updateStatus(input.bookingId, "WAITING_FINAL_CONFIRMATION");
 
   const reviews = await deps.bookingReviews.listByBookingId(input.bookingId);
   let shipmentId = null;

@@ -22,13 +22,13 @@ export async function completePortReview(deps: CompletePortReviewDeps, input: Co
   let nextStep = "";
 
   if (input.finalReviewDecision === "APPROVED") {
-    newStatus = "APPROVED";
+    newStatus = "VESSEL_CANDIDATES_READY";
     nextStep = "MATCHING_VESSELS";
   } else if (input.finalReviewDecision === "REJECTED") {
-    newStatus = "CANCELLED";
+    newStatus = "REJECTED_BY_PORT";
     nextStep = "WORKFLOW_CLOSED";
   } else if (input.finalReviewDecision === "REQUIRES_UPDATE") {
-    newStatus = "PENDING";
+    newStatus = "PENDING_PORT_REVIEW";
     nextStep = "WAITING_CUSTOMER_UPDATE";
   }
 
