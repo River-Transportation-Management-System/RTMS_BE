@@ -88,6 +88,7 @@ CREATE TABLE booking (
   booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   receive_date TIMESTAMP,
   expected_date TIMESTAMP,
+  expired_date TIMESTAMP,
   booking_status VARCHAR(50) DEFAULT 'PENDING_PORT_REVIEW',
   cargo_type VARCHAR(100),
   cargo_capacity DECIMAL(10, 2),

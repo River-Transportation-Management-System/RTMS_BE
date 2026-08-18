@@ -28,7 +28,6 @@ type BookingRow = {
   booking_status: string | null;
   cargo_type: string | null;
   cargo_capacity: string | null;
-  notes: string | null;
   user_id: number | null;
   route_id: number | null;
 };
@@ -43,7 +42,7 @@ function mapBooking(row: BookingRow): BookingEntity {
     bookingStatus: row.booking_status,
     cargoType: row.cargo_type,
     cargoCapacity: row.cargo_capacity == null ? null : String(row.cargo_capacity),
-    notes: row.notes,
+    notes: null,
     userId: row.user_id,
     routeId: row.route_id,
   };
@@ -58,7 +57,6 @@ const BOOKING_COLUMNS = `
   booking_status,
   cargo_type,
   cargo_capacity,
-  notes,
   user_id,
   route_id
 `;
@@ -76,10 +74,9 @@ export class BookingPgRepository implements BookingRepository {
          booking_status,
          cargo_type,
          cargo_capacity,
-         notes,
          user_id,
          route_id
-       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING ${BOOKING_COLUMNS}`,
       [
         input.bookingDate,
@@ -89,7 +86,6 @@ export class BookingPgRepository implements BookingRepository {
         input.bookingStatus,
         input.cargoType,
         input.cargoCapacity,
-        input.notes,
         input.userId,
         input.routeId,
       ],
@@ -101,7 +97,7 @@ export class BookingPgRepository implements BookingRepository {
   async findById(bookingId: EntityId): Promise<BookingEntity | null> {
     const result = await this.db.query<BookingRow>(
       `SELECT ${BOOKING_COLUMNS}
-       FROM booking
+      FROM booking
        WHERE booking_id = $1`,
       [bookingId],
     );
@@ -217,7 +213,7 @@ export class BookingPgRepository implements BookingRepository {
     const listParams = [...params, pagination.limit, offset];
     const listResult = await this.db.query<BookingRow>(
       `SELECT ${BOOKING_COLUMNS}
-       FROM booking
+      FROM booking
        ${whereSql}
        ORDER BY booking_id DESC
        LIMIT $${params.length + 1}
@@ -255,9 +251,6 @@ export class BookingPgRepository implements BookingRepository {
     }
     if (patch.cargoCapacity !== undefined) {
       setColumn("cargo_capacity", patch.cargoCapacity);
-    }
-    if (patch.notes !== undefined) {
-      setColumn("notes", patch.notes);
     }
     if (patch.routeId !== undefined) {
       setColumn("route_id", patch.routeId);
