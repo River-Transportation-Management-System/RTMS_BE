@@ -38,6 +38,7 @@ export async function selectVesselForBooking(
       ...match,
       selectionNote: input.selection_note?.trim() ? input.selection_note.trim() : null,
     });
+    await deps.bookings.updateStatus(bookingId, "WAITING_FINAL_CONFIRMATION");
   } catch (error) {
     if (error instanceof Error && error.message === "VESSEL_SELECTION_ALREADY_CONFIRMED") {
       throw AppError.conflict("Cannot change vessel selection after final confirmation", {

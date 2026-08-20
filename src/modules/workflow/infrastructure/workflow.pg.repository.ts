@@ -109,7 +109,7 @@ export class WorkflowPgRepository implements WorkflowRepository {
     await this.db.query(
       `UPDATE vessel_match
        SET match_status = 'REJECTED'
-       WHERE booking_id = $1 AND vessel_id != $2 AND match_status = 'ACCEPTED'`,
+       WHERE booking_id = $1 AND vessel_id != $2 AND match_status IN ('ACCEPTED', 'PENDING')`,
       [bookingId, selectedVesselId],
     );
   }

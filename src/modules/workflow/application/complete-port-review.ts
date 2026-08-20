@@ -22,8 +22,8 @@ export async function completePortReview(deps: CompletePortReviewDeps, input: Co
   let nextStep = "";
 
   if (input.finalReviewDecision === "APPROVED") {
-    newStatus = "VESSEL_CANDIDATES_READY";
-    nextStep = "MATCHING_VESSELS";
+    newStatus = "WAITING_VESSEL_RESPONSE";
+    nextStep = "WAITING_VESSEL_RESPONSE";
   } else if (input.finalReviewDecision === "REJECTED") {
     newStatus = "REJECTED_BY_PORT";
     nextStep = "WORKFLOW_CLOSED";
@@ -41,6 +41,26 @@ export async function completePortReview(deps: CompletePortReviewDeps, input: Co
   });
 
   const finalBooking = await deps.bookings.updateStatus(input.bookingId, newStatus as any);
+
+  if (input.finalReviewDecision === "APPROVED") {
+    try {
+      const { database } = await import("@/infrastructure/database/postgres");
+      await database.query(
+        `INSERT INTO vessel_match (vessel_id, booking_id, match_status, created_at)
+         SELECT v.vessel_id, b.booking_id, 'PENDING', CURRENT_TIMESTAMP
+         FROM vessel v, booking b
+         WHERE b.booking_id = $1
+           AND v.vessel_status = 'ACTIVE'
+           AND v.vessel_capacity >= b.cargo_capacity
+           AND NOT EXISTS (
+             SELECT 1 FROM vessel_match vm WHERE vm.booking_id = b.booking_id AND vm.vessel_id = v.vessel_id
+           )`,
+        [input.bookingId],
+      );
+    } catch (err) {
+      console.warn("[completePortReview] Auto-match vessel query notice:", err);
+    }
+  }
 
   return {
     bookingId: finalBooking.bookingId,

@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import { getMe } from "@/modules/auth/application/get-me";
 import { toMeResponse } from "@/modules/auth/presentation/auth.mapper";
 import { UserPgRepository } from "@/modules/user/infrastructure/user.pg.repository";
+import { CORS_HEADERS } from "@/shared/http/api-response";
 
 export const dynamic = "force-dynamic";
 
 const authRepository = new UserPgRepository();
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
 
 export async function GET(request: Request) {
   try {
@@ -15,7 +20,7 @@ export async function GET(request: Request) {
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { success: false, message: "Không tìm thấy token xác thực hoặc sai định dạng" },
-        { status: 401 }
+        { status: 401, headers: CORS_HEADERS }
       );
     }
 
@@ -34,7 +39,7 @@ export async function GET(request: Request) {
         timestamp: new Date().toISOString(),
         data: responseData,
       },
-      { status: 200 }
+      { status: 200, headers: CORS_HEADERS }
     );
 
   } catch (error: any) {
@@ -43,7 +48,7 @@ export async function GET(request: Request) {
     
     return NextResponse.json(
       { success: false, message: error.message || "Đã có lỗi xảy ra" },
-      { status: status }
+      { status: status, headers: CORS_HEADERS }
     );
   }
 }

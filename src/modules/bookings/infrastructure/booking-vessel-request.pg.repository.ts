@@ -10,6 +10,7 @@ import type {
 type VesselRequestRow = {
   match_id: number;
   vessel_id: number;
+  match_status: string | null;
   vessel_owner_name: string | null;
   vessel_status: string | null;
   vessel_capacity: string | null;
@@ -25,6 +26,7 @@ export class BookingVesselRequestPgRepository implements BookingVesselRequestRep
       `SELECT
          vm.match_id,
          vm.vessel_id,
+         vm.match_status,
          v.vessel_owner_name,
          v.vessel_status,
          v.vessel_capacity,
@@ -40,6 +42,7 @@ export class BookingVesselRequestPgRepository implements BookingVesselRequestRep
     return result.rows.map((row) => ({
       matchId: row.match_id,
       vesselId: row.vessel_id,
+      matchStatus: row.match_status,
       vesselOwnerName: row.vessel_owner_name,
       vesselStatus: row.vessel_status,
       vesselCapacity: row.vessel_capacity,

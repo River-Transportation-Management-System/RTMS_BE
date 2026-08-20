@@ -1,13 +1,9 @@
 name: rtms
 
-# Expect RTMS_FE to sit next to this repository:
-#   parent/
-#   ├── RTMS_BE/   (this repo)
-#   └── RTMS_FE/
-
 services:
   database:
     image: postgis/postgis:17-3.5-alpine
+    container_name: rtms_db
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-rtms}
       POSTGRES_USER: ${POSTGRES_USER:-rtms}
@@ -23,12 +19,17 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
+    networks:
+      - rtms_net
 
   backend:
     build:
       context: .
+      dockerfile: Dockerfile
+    container_name: rtms_backend
     environment:
       NODE_ENV: production
+      PORT: 3001
       DATABASE_URL: postgresql://${POSTGRES_USER:-rtms}:${POSTGRES_PASSWORD:-rtms_dev_password}@database:5432/${POSTGRES_DB:-rtms}
       FRONTEND_URL: http://localhost:${FRONTEND_PORT:-3000}
       N8N_WEBHOOK_BASE_URL: http://n8n:5678/webhook
@@ -38,20 +39,31 @@ services:
       database:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - rtms_net
 
   frontend:
     build:
       context: ../RTMS_FE
+      dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: http://localhost:${BACKEND_PORT:-3001}/api/v1
+    container_name: rtms_frontend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      BACKEND_INTERNAL_URL: http://backend:3001
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - rtms_net
 
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
+    container_name: rtms_n8n
     environment:
       N8N_HOST: localhost
       N8N_PORT: 5678
@@ -65,7 +77,13 @@ services:
       - n8n_data:/home/node/.n8n
       - ./n8n/workflows:/workflows:ro
     restart: unless-stopped
+    networks:
+      - rtms_net
 
 volumes:
   postgres_data:
   n8n_data:
+
+networks:
+  rtms_net:
+    driver: bridge

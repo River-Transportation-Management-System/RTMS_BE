@@ -15,6 +15,7 @@ export type LoginHttpResponse = {
     user_email: string | null;
     role_id: string;
     role_name: string | null;
+    role_code: string | null;
     user_status: string | null;
   };
 };
@@ -45,6 +46,7 @@ export function toLoginResponse(
       user_email: user.userEmail,
       role_id: String(user.roleId),
       role_name: user.roleName,
+      role_code: user.roleCode ?? null,
       user_status: user.userStatus,
     },
   };

@@ -40,33 +40,11 @@ export async function createPortReview(
     }
   }
 
-  const alreadyReviewed = await deps.reviews.existsForBookingPort(bookingId, input.port_id);
-  if (alreadyReviewed) {
-    throw AppError.conflict("A review already exists for this booking and port", {
-      booking_id: bookingId,
-      port_id: input.port_id,
-    });
-  }
-
-  try {
-    return await deps.reviews.create({
-      bookingId,
-      portId: input.port_id,
-      reviewStatus: input.review_status,
-      reviewDate: new Date(),
-      reviewNote: input.review_note?.trim() ? input.review_note.trim() : null,
-    });
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      (error.name === "UniqueBookingPortReviewError" ||
-        error.message === "UNIQUE_BOOKING_PORT_REVIEW")
-    ) {
-      throw AppError.conflict("A review already exists for this booking and port", {
-        booking_id: bookingId,
-        port_id: input.port_id,
-      });
-    }
-    throw error;
-  }
+  return await deps.reviews.create({
+    bookingId,
+    portId: input.port_id,
+    reviewStatus: input.review_status,
+    reviewDate: new Date(),
+    reviewNote: input.review_note?.trim() ? input.review_note.trim() : null,
+  });
 }

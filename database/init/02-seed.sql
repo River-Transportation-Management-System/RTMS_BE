@@ -984,68 +984,69 @@ VALUES -- Standard Workflow States
 -- 8. SEED DATA: BookingReview
 -- Mỗi booking sẽ được xét duyệt bởi Cảng xuất phát / Cảng đích thuộc Tuyến đường
 -- ------------------------------------------------------------------------------
-INSERT INTO booking_review (booking_id, port_id, review_status, review_date)
+INSERT INTO booking_review (booking_id, port_id, review_status, review_date, review_note)
 VALUES -- Reviews cho Booking 1..10
-    (1, 1, 'PENDING', NOW() - INTERVAL '1 day'),
-    (2, 1, 'PENDING', NOW() - INTERVAL '2 days'),
-    (3, 1, 'REJECTED', NOW() - INTERVAL '14 days'),
-    (4, 1, 'APPROVED', NOW() - INTERVAL '3 days'),
-    (4, 3, 'APPROVED', NOW() - INTERVAL '3 days'),
-    (5, 2, 'APPROVED', NOW() - INTERVAL '4 days'),
-    (6, 1, 'APPROVED', NOW() - INTERVAL '9 days'),
-    (7, 1, 'APPROVED', NOW() - INTERVAL '7 days'),
-    (8, 1, 'APPROVED', NOW() - INTERVAL '5 days'),
-    (9, 2, 'APPROVED', NOW() - INTERVAL '4 days'),
-    (10, 3, 'APPROVED', NOW() - INTERVAL '3 days'),
+    (1, 1, 'PENDING', NOW() - INTERVAL '1 day', NULL),
+    (2, 1, 'PENDING', NOW() - INTERVAL '2 days', NULL),
+    (3, 1, 'REJECTED', NOW() - INTERVAL '14 days', 'Bến từ chối do không đủ điều kiện bốc xếp'),
+    (4, 1, 'APPROVED', NOW() - INTERVAL '3 days', 'Duyệt điều kiện bến xuất phát'),
+    (4, 3, 'APPROVED', NOW() - INTERVAL '3 days', 'Duyệt điều kiện bến đích'),
+    (5, 2, 'APPROVED', NOW() - INTERVAL '4 days', 'Duyệt điều kiện bến Hiệp Phước'),
+    (6, 1, 'APPROVED', NOW() - INTERVAL '9 days', 'Duyệt điều kiện bến Cát Lái'),
+    (7, 1, 'APPROVED', NOW() - INTERVAL '7 days', 'Duyệt điều kiện bến Cát Lái'),
+    (8, 1, 'APPROVED', NOW() - INTERVAL '5 days', 'Duyệt điều kiện bến Cát Lái'),
+    (9, 2, 'APPROVED', NOW() - INTERVAL '4 days', 'Duyệt điều kiện bến Hiệp Phước'),
+    (10, 3, 'APPROVED', NOW() - INTERVAL '3 days', 'Duyệt điều kiện bến Cần Thơ'),
     -- Reviews cho Booking 11..30
-    (13, 1, 'APPROVED', NOW() - INTERVAL '1 day'),
-    (14, 1, 'APPROVED', NOW() - INTERVAL '2 days'),
-    (15, 2, 'APPROVED', NOW() - INTERVAL '6 days'),
-    (16, 3, 'APPROVED', NOW() - INTERVAL '8 days'),
-    (17, 5, 'APPROVED', NOW() - INTERVAL '11 days'),
-    (18, 1, 'APPROVED', NOW() - INTERVAL '3 days'),
-    (19, 1, 'APPROVED', NOW() - INTERVAL '4 days'),
-    (20, 2, 'APPROVED', NOW() - INTERVAL '2 days'),
-    (21, 3, 'APPROVED', NOW() - INTERVAL '1 day'),
-    (22, 1, 'APPROVED', NOW() - INTERVAL '10 days'),
-    (23, 1, 'APPROVED', NOW() - INTERVAL '13 days'),
-    (24, 1, 'APPROVED', NOW() - INTERVAL '12 days'),
-    (25, 2, 'APPROVED', NOW() - INTERVAL '5 days'),
-    (26, 3, 'APPROVED', NOW() - INTERVAL '1 day'),
-    (30, 1, 'APPROVED', NOW() - INTERVAL '2 days');
+    (13, 1, 'APPROVED', NOW() - INTERVAL '1 day', 'Đã kiểm duyệt bến Cát Lái cho booking #13'),
+    (14, 1, 'APPROVED', NOW() - INTERVAL '2 days', 'Đã kiểm duyệt bến Cát Lái cho booking #14'),
+    (15, 2, 'APPROVED', NOW() - INTERVAL '6 days', 'Đã kiểm duyệt bến Hiệp Phước cho booking #15'),
+    (16, 3, 'APPROVED', NOW() - INTERVAL '8 days', 'Đã kiểm duyệt bến Cần Thơ cho booking #16'),
+    (17, 5, 'APPROVED', NOW() - INTERVAL '11 days', 'Đã kiểm duyệt bến Long An cho booking #17'),
+    (18, 1, 'APPROVED', NOW() - INTERVAL '3 days', 'Đã kiểm duyệt bến Cát Lái cho booking #18'),
+    (19, 1, 'APPROVED', NOW() - INTERVAL '4 days', 'Đã kiểm duyệt bến Cát Lái cho booking #19'),
+    (20, 2, 'APPROVED', NOW() - INTERVAL '2 days', 'Đã kiểm duyệt bến Hiệp Phước cho booking #20'),
+    (21, 3, 'APPROVED', NOW() - INTERVAL '1 day', 'Đã kiểm duyệt bến Cần Thơ cho booking #21'),
+    (22, 1, 'APPROVED', NOW() - INTERVAL '10 days', 'Đã kiểm duyệt bến Cát Lái cho booking #22'),
+    (23, 1, 'APPROVED', NOW() - INTERVAL '13 days', 'Đã kiểm duyệt bến Cát Lái cho booking #23'),
+    (24, 1, 'APPROVED', NOW() - INTERVAL '12 days', 'Đã kiểm duyệt bến Cát Lái cho booking #24'),
+    (25, 2, 'APPROVED', NOW() - INTERVAL '5 days', 'Đã kiểm duyệt bến Hiệp Phước cho booking #25'),
+    (26, 3, 'APPROVED', NOW() - INTERVAL '1 day', 'Đã kiểm duyệt bến Cần Thơ cho booking #26'),
+    (30, 1, 'APPROVED', NOW() - INTERVAL '2 days', 'Đã kiểm duyệt bến Cát Lái cho booking #30');
 -- ------------------------------------------------------------------------------
 -- 9. SEED DATA: VesselMatch
--- Ghép 1 hoặc nhiều tàu ứng viên phù hợp với sức chứa của Booking đã được APPROVED/MATCHED/IN_PROGRESS/COMPLETED
 -- ------------------------------------------------------------------------------
-INSERT INTO vessel_match (vessel_id, booking_id)
-VALUES -- Booking 6 (Tải trọng 300) -> Tàu 1 (Capacity 500) & Tàu 2 (Capacity 350)
-    (1, 6),
-    (2, 6),
-    -- Booking 7 (Tải trọng 400) -> Tàu 3 (Capacity 600)
-    (3, 7),
-    -- Booking 8 (Tải trọng 350) -> Tàu 4 (Capacity 400)
-    (4, 8),
-    -- Booking 9 (Tải trọng 220) -> Tàu 6 (Capacity 500) & Tàu 7 (Capacity 450)
-    (6, 9),
-    (7, 9),
-    -- Booking 10 (Tải trọng 180) -> Tàu 9 (Capacity 250)
-    (9, 10),
-    -- Booking 15..25
-    (11, 15),
-    (12, 16),
-    (13, 17),
-    (14, 18),
-    (16, 19),
-    (17, 20),
-    (18, 21),
-    (19, 22),
-    (20, 23),
-    (1, 24),
-    (3, 25),
-    (8, 30);
+INSERT INTO vessel_match (vessel_id, booking_id, match_status, created_at, response_at)
+VALUES
+    (1, 6, 'ACCEPTED', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days'),
+    (2, 6, 'REJECTED', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days'),
+    (3, 7, 'ACCEPTED', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days'),
+    (4, 8, 'ACCEPTED', NOW() - INTERVAL '5 days', NOW() - INTERVAL '4 days'),
+    (6, 9, 'PENDING', NOW() - INTERVAL '2 days', NULL),
+    (7, 9, 'ACCEPTED', NOW() - INTERVAL '2 days', NOW() - INTERVAL '1 day'),
+    (9, 10, 'ACCEPTED', NOW() - INTERVAL '8 days', NOW() - INTERVAL '7 days'),
+    (11, 15, 'PENDING', NOW() - INTERVAL '1 day', NULL),
+    (12, 16, 'ACCEPTED', NOW() - INTERVAL '6 days', NOW() - INTERVAL '5 days'),
+    (13, 17, 'ACCEPTED', NOW() - INTERVAL '10 days', NOW() - INTERVAL '9 days'),
+    (14, 18, 'REJECTED', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days'),
+    (16, 19, 'PENDING', NOW() - INTERVAL '1 day', NULL),
+    (17, 20, 'ACCEPTED', NOW() - INTERVAL '2 days', NOW() - INTERVAL '1 day'),
+    (18, 21, 'ACCEPTED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '12 hours'),
+    (19, 22, 'ACCEPTED', NOW() - INTERVAL '3 days', NOW() - INTERVAL '2 days'),
+    (20, 23, 'ACCEPTED', NOW() - INTERVAL '4 days', NOW() - INTERVAL '3 days'),
+    (1, 24, 'ACCEPTED', NOW() - INTERVAL '4 days', NOW() - INTERVAL '3 days'),
+    (3, 25, 'ACCEPTED', NOW() - INTERVAL '5 days', NOW() - INTERVAL '4 days'),
+    (8, 30, 'SELECTED', NOW() - INTERVAL '2 days', NOW() - INTERVAL '1 day');
 -- ------------------------------------------------------------------------------
--- 10. SEED DATA: Shipment
--- Tạo các chuyến vận chuyển thực tế từ BookingReview đã APPROVED và VesselMatch thành công
+-- 10. SEED DATA: BookingVesselSelection
+-- ------------------------------------------------------------------------------
+INSERT INTO booking_vessel_selection (booking_id, match_id, vessel_id, selection_note, selected_at, selection_status, finalized_at)
+VALUES
+    (6, 1, 1, 'Khách hàng chốt chọn Tàu 01 cho đơn chuyến #6', NOW() - INTERVAL '2 days', 'FINALIZED', NOW() - INTERVAL '2 days'),
+    (7, 3, 3, 'Khách hàng chốt chọn Tàu 03 cho đơn chuyến #7', NOW() - INTERVAL '2 days', 'FINALIZED', NOW() - INTERVAL '2 days'),
+    (30, 19, 8, 'Khách hàng chốt chọn Tàu 08 cho đơn chuyến #30', NOW() - INTERVAL '1 day', 'FINALIZED', NOW() - INTERVAL '1 day');
+-- ------------------------------------------------------------------------------
+-- 11. SEED DATA: Shipment
 -- ------------------------------------------------------------------------------
 INSERT INTO shipment (
         shipment_status,
@@ -1053,17 +1054,12 @@ INSERT INTO shipment (
         vessel_id,
         review_id
     )
-VALUES -- Booking 6 (Review 7, Vessel 1) -> Completed
+VALUES
     ('DELIVERED', NOW() - INTERVAL '8 days', 1, 7),
-    -- Booking 7 (Review 8, Vessel 3) -> Completed
     ('DELIVERED', NOW() - INTERVAL '6 days', 3, 8),
-    -- Booking 8 (Review 9, Vessel 4) -> In Transit
     ('IN_TRANSIT', NOW() - INTERVAL '4 days', 4, 9),
-    -- Booking 9 (Review 10, Vessel 7) -> In Transit
     ('IN_TRANSIT', NOW() - INTERVAL '3 days', 7, 10),
-    -- Booking 10 (Review 11, Vessel 9) -> Planned
     ('PLANNED', NOW() - INTERVAL '1 day', 9, 11),
-    -- Các shipment khác
     ('DELIVERED', NOW() - INTERVAL '5 days', 11, 14),
     ('DELIVERED', NOW() - INTERVAL '7 days', 12, 15),
     ('DELIVERED', NOW() - INTERVAL '10 days', 13, 16),
@@ -1076,3 +1072,12 @@ VALUES -- Booking 6 (Review 7, Vessel 1) -> Completed
     ('DELIVERED', NOW() - INTERVAL '11 days', 1, 23),
     ('IN_TRANSIT', NOW() - INTERVAL '3 days', 3, 24),
     ('PLANNED', NOW() - INTERVAL '1 day', 8, 25);
+-- ------------------------------------------------------------------------------
+-- 12. SEED DATA: BookingFinalConfirmation
+-- ------------------------------------------------------------------------------
+INSERT INTO booking_final_confirmation (booking_id, match_id, vessel_id, port_id, confirmation_actor_id, confirmation_note, confirmed_at, shipment_id)
+VALUES
+    (6, 1, 1, 1, 1, 'Xác nhận hợp đồng vận chuyển chuyến #6 chính thức', NOW() - INTERVAL '1 day', 1),
+    (7, 3, 3, 1, 1, 'Xác nhận hợp đồng vận chuyển chuyến #7 chính thức', NOW() - INTERVAL '1 day', 2),
+    (30, 19, 8, 1, 1, 'Xác nhận hợp đồng vận chuyển chuyến #30 chính thức', NOW() - INTERVAL '12 hours', 17);
+

@@ -40,8 +40,8 @@ export async function finalConfirmBooking(
     });
   }
 
-  if (booking.bookingStatus !== "MATCHED") {
-    throw AppError.unprocessable("Only MATCHED bookings can receive final confirmation", {
+  if (booking.bookingStatus !== "MATCHED" && booking.bookingStatus !== "WAITING_FINAL_CONFIRMATION") {
+    throw AppError.unprocessable("Only MATCHED or WAITING_FINAL_CONFIRMATION bookings can receive final confirmation", {
       booking_id: bookingId,
       booking_status: booking.bookingStatus,
     });

@@ -4,6 +4,7 @@ export function toBookingVesselRequestResponse(item: BookingVesselRequestRecord)
   return {
     match_id: item.matchId,
     vessel_id: item.vesselId,
+    match_status: item.matchStatus,
     vessel_summary: {
       vessel_owner_name: item.vesselOwnerName,
       vessel_status: item.vesselStatus,

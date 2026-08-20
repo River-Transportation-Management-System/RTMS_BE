@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
-
 import { AppError, isAppError } from "@/shared/errors/app-error";
 
+export const CORS_HEADERS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD",
+  "Access-Control-Allow-Headers":
+    "Content-Type, Authorization, x-user-id, x-role-code, Accept, Origin, X-Requested-With",
+};
+
 export function ok<T>(data: T, status = 200) {
-  return NextResponse.json({ success: true, data }, { status });
+  return NextResponse.json({ success: true, data }, { status, headers: CORS_HEADERS });
 }
 
 export function created<T>(data: T) {
@@ -21,7 +27,7 @@ export function fail(error: unknown) {
           details: error.details ?? null,
         },
       },
-      { status: error.status },
+      { status: error.status, headers: CORS_HEADERS },
     );
   }
 
@@ -36,7 +42,7 @@ export function fail(error: unknown) {
         details: null,
       },
     },
-    { status: 500 },
+    { status: 500, headers: CORS_HEADERS },
   );
 }
 

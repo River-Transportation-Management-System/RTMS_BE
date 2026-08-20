@@ -1,21 +1,24 @@
-FROM node:24-alpine AS dependencies
+FROM node:22-alpine AS dependencies
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
-# Next.js collects route data at build time; env is required by pg pool imports.
-ENV DATABASE_URL=postgresql://rtms:rtms@127.0.0.1:5432/rtms
+# Build time dummy envs so Next.js build succeeds
+ENV DATABASE_URL=postgresql://rtms:rtms_dev_password@database:5432/rtms
 ENV FRONTEND_URL=http://localhost:3000
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-FROM node:24-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3001
+ENV NEXT_TELEMETRY_DISABLED=1
+
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3001

@@ -85,7 +85,7 @@ export class FinalConfirmationPgRepository implements FinalConfirmationRepositor
         `UPDATE booking
          SET booking_status = 'IN_PROGRESS'
          WHERE booking_id = $1
-           AND booking_status = 'MATCHED'
+           AND booking_status IN ('MATCHED', 'WAITING_FINAL_CONFIRMATION')
          RETURNING booking_id`,
         [input.bookingId],
       );

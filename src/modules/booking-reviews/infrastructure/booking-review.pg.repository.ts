@@ -61,34 +61,30 @@ export class BookingReviewPgRepository implements BookingReviewRepository {
   constructor(private readonly db: Pool = database) {}
 
   async create(input: CreateBookingReviewRecord): Promise<BookingReviewEntity> {
-    try {
-      const result = await this.db.query<ReviewRow>(
-        `INSERT INTO booking_review (
-           booking_id,
-           port_id,
-           review_status,
-           review_date,
-           review_note
-         ) VALUES ($1, $2, $3, $4, $5)
-         RETURNING ${REVIEW_COLUMNS}`,
-        [
-          input.bookingId,
-          input.portId,
-          input.reviewStatus,
-          input.reviewDate,
-          input.reviewNote,
-        ],
-      );
+    const result = await this.db.query<ReviewRow>(
+      `INSERT INTO booking_review (
+         booking_id,
+         port_id,
+         review_status,
+         review_date,
+         review_note
+       ) VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (booking_id, port_id)
+       DO UPDATE SET
+         review_status = EXCLUDED.review_status,
+         review_date = EXCLUDED.review_date,
+         review_note = EXCLUDED.review_note
+       RETURNING ${REVIEW_COLUMNS}`,
+      [
+        input.bookingId,
+        input.portId,
+        input.reviewStatus,
+        input.reviewDate,
+        input.reviewNote,
+      ],
+    );
 
-      return mapReview(result.rows[0]);
-    } catch (error) {
-      if (isUniqueViolation(error)) {
-        const conflict = new Error("UNIQUE_BOOKING_PORT_REVIEW");
-        conflict.name = "UniqueBookingPortReviewError";
-        throw conflict;
-      }
-      throw error;
-    }
+    return mapReview(result.rows[0]);
   }
 
   async listByBookingId(bookingId: EntityId): Promise<BookingReviewSummary[]> {
@@ -104,25 +100,13 @@ export class BookingReviewPgRepository implements BookingReviewRepository {
   }
 
   async existsForBookingPort(bookingId: EntityId, portId: EntityId): Promise<boolean> {
-    const result = await this.db.query<{ exists: boolean }>(
-      `SELECT EXISTS(
-         SELECT 1
-         FROM booking_review
-         WHERE booking_id = $1
-           AND port_id = $2
-       ) AS exists`,
+    const result = await this.db.query<{ total: string }>(
+      `SELECT COUNT(*)::text AS total
+       FROM booking_review
+       WHERE booking_id = $1 AND port_id = $2`,
       [bookingId, portId],
     );
 
-    return result.rows[0]?.exists ?? false;
+    return Number(result.rows[0]?.total ?? 0) > 0;
   }
-}
-
-function isUniqueViolation(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    (error as { code?: string }).code === "23505"
-  );
 }
