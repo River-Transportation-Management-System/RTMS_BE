@@ -1,0 +1,51 @@
+{
+  "name": "RTMS - 03. Booking Expired Daily Cleanup",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-daily-midnight",
+      "name": "Daily Midnight Trigger (00:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:3001/api/v1/internal/jobs/booking-expired",
+        "options": {}
+      },
+      "id": "trigger-booking-expired-job",
+      "name": "Run Booking Expired Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    }
+  ],
+  "connections": {
+    "Daily Midnight Trigger (00:00)": {
+      "main": [
+        [
+          {
+            "node": "Run Booking Expired Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -25,6 +25,14 @@ export async function createPortReview(
     throw AppError.unprocessable("Cannot review a cancelled booking");
   }
 
+  if (booking.bookingStatus === "EXPIRED" || (booking.expiredDate && new Date(booking.expiredDate).getTime() < Date.now())) {
+    throw AppError.unprocessable("Cannot review an expired booking");
+  }
+
+  if (booking.bookingStatus !== "PENDING_PORT_REVIEW") {
+    throw AppError.unprocessable(`Booking is in ${booking.bookingStatus} status, port review is no longer accepted`);
+  }
+
   const portExists = await deps.ports.exists(input.port_id);
   if (!portExists) {
     throw AppError.unprocessable("port_id does not exist", { port_id: input.port_id });

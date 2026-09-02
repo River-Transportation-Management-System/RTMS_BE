@@ -64,6 +64,7 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: rtms_n8n
+    command: /bin/sh -c "n8n import:workflow --separate --input=/workflows || true; exec n8n"
     environment:
       N8N_HOST: localhost
       N8N_PORT: 5678
@@ -71,6 +72,9 @@ services:
       WEBHOOK_URL: http://localhost:${N8N_PORT:-5678}/
       GENERIC_TIMEZONE: Asia/Ho_Chi_Minh
       TZ: Asia/Ho_Chi_Minh
+      N8N_DEFAULT_BINARY_DATA_MODE: filesystem
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      NODE_FUNCTION_ALLOW_EXTERNAL: "*"
     ports:
       - "${N8N_PORT:-5678}:5678"
     volumes:
