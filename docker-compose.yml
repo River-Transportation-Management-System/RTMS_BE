@@ -64,7 +64,8 @@ services:
   n8n:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: rtms_n8n
-    command: /bin/sh -c "n8n import:workflow --separate --input=/workflows || true; exec n8n"
+    entrypoint: /bin/sh
+    command: -c "n8n import:workflow --separate --input=/workflows && n8n publish:workflow --id=rtms-port-deadline && n8n publish:workflow --id=rtms-vessel-timeout && n8n publish:workflow --id=rtms-booking-expired || true; exec /docker-entrypoint.sh"
     environment:
       N8N_HOST: localhost
       N8N_PORT: 5678
