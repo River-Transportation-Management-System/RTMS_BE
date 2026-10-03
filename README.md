@@ -26,7 +26,6 @@ RTMS_BE/
 │   ├── 01-schema.sql          # Định nghĩa 13 bảng CSDL chuẩn hóa (PostGIS GeoJSON + RefreshToken)
 │   └── 02-seed.sql            # Dữ liệu mẫu khởi tạo (Roles, Users, Ports, Vessels, Routes, Bookings)
 ├── Dockerfile                 # Multi-stage Dockerfile cho Backend Service (Port 3001)
-├── docker-compose.yml         # Container compose cho PostgreSQL + PostGIS, BE, FE, n8n
 ├── src/
 │   ├── app/api/v1/            # 35+ REST API Route Handlers
 │   ├── modules/               # Bounded Contexts theo mô hình DDD
@@ -42,7 +41,8 @@ RTMS_BE/
 │   └── shared/                # Helper HTTP Response, Zod Schemas
 ├── APIs.md                    # Tài liệu đặc tả chuẩn hóa 35 REST APIs
 ├── REPORT.md                  # Báo cáo kỹ thuật Backend APIs (100% Passed)
-└── test-all-apis.js           # Bộ kiểm thử tự động toàn bộ 35 APIs
+├── test-all-apis.js           # Bộ kiểm thử tự động toàn bộ 35 APIs
+└── README.md                  # Hướng dẫn chi tiết cho Backend Service
 ```
 
 ---
@@ -119,7 +119,8 @@ CSDL PostgreSQL được thiết kế chuẩn hóa tại `database/init/01-schem
 
 ### 1. Khởi chạy với Docker Compose (Khuyên dùng)
 ```bash
-docker compose up --build -d backend database
+# Từ thư mục gốc dự án River_Management:
+docker compose up --build -d rtms_backend rtms_db
 # Server REST APIs chạy tại: http://localhost:3001/api/v1
 ```
 
